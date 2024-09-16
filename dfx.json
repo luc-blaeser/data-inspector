@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "data-inspection-backend": {
+      "main": "src/data-inspection-backend/main.mo",
+      "type": "motoko",
+      "args": "--enhanced-orthogonal-persistence --sanity-checks"
+    },
+    "data-inspection-frontend": {
+      "dependencies": [
+        "data-inspection-backend"
+      ],
+      "source": [
+        "src/data-inspection-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "data-inspection-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

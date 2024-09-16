@@ -1,0 +1,31 @@
+{
+  "name": "data-inspection-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npm i && $DFX canister create data-inspection-backend && $DFX generate data-inspection-backend && $DFX deploy",
+    "start": "vite --port 3000",
+    "prebuild": "$DFX generate",
+    "build": "tsc && vite build",
+    "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\""
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@types/cytoscape": "^3.21.7",
+    "cross-fetch": "^3.1.6",
+    "dotenv": "^16.3.1",
+    "sass": "^1.63.6",
+    "typescript": "^5.1.3",
+    "vite": "^4.3.9",
+    "vite-plugin-environment": "^1.1.3",
+    "vitest": "^0.32.2"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^1.4.0",
+    "@dfinity/candid": "^1.4.0",
+    "@dfinity/principal": "^1.4.0",
+    "cytoscape": "^3.30.2",
+    "lit-html": "^2.8.0"
+  }
+}
