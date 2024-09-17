@@ -1,19 +1,25 @@
 {
   "canisters": {
-    "data-inspection-backend": {
-      "main": "src/data-inspection-backend/main.mo",
+    "backend1": {
+      "main": "src/backend1/main.mo",
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
-    "data-inspection-frontend": {
+    "backend2": {
+      "main": "src/backend2/main.mo",
+      "type": "motoko",
+      "args": "--enhanced-orthogonal-persistence --sanity-checks"
+    },
+    "frontend": {
       "dependencies": [
-        "data-inspection-backend"
+        "backend1",
+        "backend2"
       ],
       "source": [
-        "src/data-inspection-frontend/dist"
+        "src/frontend/dist"
       ],
       "type": "assets",
-      "workspace": "data-inspection-frontend"
+      "workspace": "frontend"
     }
   },
   "defaults": {

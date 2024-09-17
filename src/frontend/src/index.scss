@@ -3,6 +3,10 @@ body {
   font-size: 1.5rem;
 }
 
+h1 {
+  text-align: center;
+}
+
 img {
   max-width: 50vw;
   max-height: 25vw;
@@ -23,7 +27,7 @@ form {
 button[type="submit"] {
   padding: 5px 20px;
   margin: 10px auto;
-  float: right;
+  display: block;
 }
 
 
@@ -42,4 +46,11 @@ button[type="submit"] {
 
 #output:empty {
   display: none;
+}
+
+.form-block {
+  text-align: center;
+  margin: 10px auto;
+  font-size: medium;
+  display: block;
 }

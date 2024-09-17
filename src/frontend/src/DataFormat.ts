@@ -1,10 +1,9 @@
 export type MotokoHeap = {
     version: number,
-    roots: Roots,
+    root: MotokoValue,
     objects: Objects,
 };
-export type Roots = MotokoValue[];
-export type Objects = HeapObject[];
+export type Objects = Map<ObjectId, HeapObject>;
 export type ObjectId = bigint;
 
 export enum ObjectType {
@@ -28,6 +27,8 @@ export abstract class HeapObject {
         this.objectId = objectId;
         this.objectType = objectType;
     }
+
+    abstract getFields(): MotokoValue[];
 }
 
 export class MotokoObject extends HeapObject {
@@ -39,6 +40,10 @@ export class MotokoObject extends HeapObject {
         this.hashBlob = hashBlob;
         this.fields = fields;
     }
+
+    getFields(): MotokoValue[] {
+        return [this.hashBlob].concat(this.fields);
+    }
 }
 
 export class MotokoBlob extends HeapObject {
@@ -48,6 +53,10 @@ export class MotokoBlob extends HeapObject {
         super(objectId, ObjectType.BLOB);
         this.bytes = bytes;
     }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
 }
 
 export class MotokoBigInt extends HeapObject {
@@ -56,6 +65,10 @@ export class MotokoBigInt extends HeapObject {
     public constructor(objectId: ObjectId, value: bigint) {
         super(objectId, ObjectType.BIGINT);
         this.value = value;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
     }
 }
 
@@ -68,6 +81,10 @@ export class MotokoArray extends HeapObject {
         this.mutable = mutable;
         this.elements = elements;
     }
+
+    getFields(): MotokoValue[] {
+        return this.elements;;
+    }
 }
 
 export class MotokoText extends HeapObject {
@@ -77,6 +94,10 @@ export class MotokoText extends HeapObject {
         super(objectId, ObjectType.TEXT);
         this.value = value;
     }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
 }
 
 export class MotokoMutBox extends HeapObject {
@@ -85,6 +106,10 @@ export class MotokoMutBox extends HeapObject {
     public constructor(objectId: ObjectId, field: MotokoValue) {
         super(objectId, ObjectType.MUTBOX);
         this.field = field;
+    }
+
+    getFields(): MotokoValue[] {
+        return [this.field];
     }
 }
 
@@ -97,6 +122,10 @@ export class MotokoClosure extends HeapObject {
         this.functionId = functionId;
         this.elements = elements;
     }
+
+    getFields(): MotokoValue[] {
+        return this.elements;
+    }
 }
 
 export class MotokoActor extends HeapObject {
@@ -105,6 +134,10 @@ export class MotokoActor extends HeapObject {
     public constructor(objectId: ObjectId, bytes: Uint8Array) {
         super(objectId, ObjectType.ACTOR);
         this.bytes = bytes;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
     }
 }
 
@@ -117,6 +150,10 @@ export class MotokoVariant extends HeapObject {
         this.tag = tag;
         this.field = field;
     }
+
+    getFields(): MotokoValue[] {
+        return [this.field];
+    }
 }
 
 export class MotokoSharedFunction extends HeapObject {
@@ -127,6 +164,10 @@ export class MotokoSharedFunction extends HeapObject {
         super(objectId, ObjectType.SHARED_FUNCTION);
         this.actor = actor;
         this.functionName = functionName;
+    }
+
+    getFields(): MotokoValue[] {
+        return [this.actor, this.functionName];
     }
 }
 

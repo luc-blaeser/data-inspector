@@ -1,10 +1,10 @@
 {
-  "name": "data-inspection-frontend",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i && $DFX canister create data-inspection-backend && $DFX generate data-inspection-backend && $DFX deploy",
+    "setup": "npm i && $DFX canister create backend1 && $DFX generate backend1 && $DFX canister create backend2 && $DFX generate backend2 && $DFX deploy",
     "start": "vite --port 3000",
     "prebuild": "$DFX generate",
     "build": "tsc && vite build",

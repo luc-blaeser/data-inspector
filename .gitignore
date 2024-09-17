@@ -1,5 +1,5 @@
 node_modules
 .dfx
-src/data-inspection-frontend/dist
-src/data-inspection-frontend/node_modules
+src/frontend/dist
+src/frontend/node_modules
 .env

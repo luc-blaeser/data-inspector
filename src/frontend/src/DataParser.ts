@@ -1,4 +1,4 @@
-import { MotokoHeap, Objects, Roots, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction } from "./DataFormat";
+import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction } from "./DataFormat";
 
 const WORD_SIZE = 8;
 const LITTLE_ENDIAN = true;
@@ -22,22 +22,18 @@ export class DataParser {
 
     private parseHeap(): MotokoHeap {
         const version = Number(this.nextWord());
-        const roots = this.parseRoot();
+        const root = this.parseValue();
         const objects = this.parseObjects();
         return {
-            version, roots, objects
+            version, root, objects
         }
     }
 
-    private parseRoot(): Roots {
-        const root = this.parseValue();
-        return [root];
-    };
-
     private parseObjects(): Objects {
-        const objects: Objects = [];
+        const objects: Objects = new Map();
         while (this.hasMore()) {
-            objects.push(this.parseHeapObject());
+            const heapObject = this.parseHeapObject();
+            objects.set(heapObject.objectId, heapObject);
         }
         return objects;
     }
