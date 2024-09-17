@@ -88,7 +88,10 @@ export class CytospaceConverter {
             data: {
                 id: ROOTS_ID,
                 label: ROOTS_ID,
-            }
+            },
+            style: {
+                'background-color': 'red',
+            },
         });
         this.addFields(ROOTS_ID, this.heap.roots);
     }
@@ -97,7 +100,7 @@ export class CytospaceConverter {
         if (heapObject instanceof MotokoText) {
             return `"${heapObject.value}"`;
         } else if (heapObject instanceof MotokoMutBox) {
-            return `mut ${this.valueToText(heapObject.field)}`;
+            return `var ${this.valueToText(heapObject.field)}`;
         } else if (heapObject instanceof MotokoObject) {
             let text = "{ ";
             for (let field of heapObject.fields) {
