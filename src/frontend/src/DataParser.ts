@@ -1,5 +1,5 @@
-import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple, MotokoConcat, MotokoPrincipal, MotokoNat64, MotokoInt64, MotokoFloat64 } from "./DataFormat";
-import { bits64ToFloat, bits64ToSignedInt } from "./Utilities";
+import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple, MotokoConcat, MotokoPrincipal, MotokoNat64, MotokoInt64, MotokoFloat64, MotokoRegion, MotokoSome, MotokoCompactNat64, MotokoCompactInt64, MotokoCompactNat32, MotokoCompactInt32, MotokoCompactNat16, MotokoCompactInt16, MotokoCompactNat8, MotokoCompactInt8, MotokoCharacter } from "./DataFormat";
+import { bits64ToFloat, bits64ToSignedInt, signedInt } from "./Utilities";
 
 const WORD_SIZE = 8;
 const LITTLE_ENDIAN = true;
@@ -73,9 +73,25 @@ export class DataParser {
                 return this.parseVariant(objectId);
             case ObjectTag.TAG_CONCAT:
                 return this.parseConcat(objectId);
+            case ObjectTag.TAG_REGION:
+                return this.parseRegion(objectId);
+            case ObjectTag.TAG_SOME:
+                return this.parseSome(objectId);
             default:
                 throw new Error(`Unsupported object tag ${objectTag}`);
         }
+    }
+
+    private parseSome(objectId: ObjectId) {
+        const field = this.parseValue();
+        return new MotokoSome(objectId, field);
+    }
+
+    private parseRegion(objectId: ObjectId) {
+        const regionId = this.nextWord();
+        const pageCount = this.nextWord();
+        const pageTable = this.parseValue();
+        return new MotokoRegion(objectId, regionId, pageCount, pageTable);
     }
 
     private parseBoxed64(objectId: ObjectId, objectTag: ObjectTag) {
@@ -95,7 +111,7 @@ export class DataParser {
     }
 
     private parseConcat(objectId: ObjectId): MotokoConcat {
-        const length = this.nextWord() as bigint;
+        const length = this.nextWord();
         const text1 = this.parseValue();
         const text2 = this.parseValue();
         return new MotokoConcat(objectId, length, text1, text2);
@@ -210,7 +226,25 @@ export class DataParser {
         } else if ((word & 1n) == 1n) {
             return new MotokoPointer(word);
         } else if ((word & 3n) == 2n) {
-            return new MotokoCompactBigInt(word >> 2n);
+            return new MotokoCompactBigInt(signedInt(word >> 2n, 62));
+        } else if ((word & 15n) == 4n) {
+            return new MotokoCompactNat64(word >> 4n);
+        } else if ((word & 15n) == 0xCn) {
+            return new MotokoCompactInt64(signedInt(word >> 4n, 60));
+        } else if ((word & 0xFFFF_FFFFn) == 0x4000_0000n) {
+            return new MotokoCompactNat32(Number(word >> 32n));
+        } else if ((word & 0xFFFF_FFFFn) == 0xC000_0000n) {
+            return new MotokoCompactInt32(Number(signedInt(word >> 32n, 32)));
+        } else if ((word & 0x7FF_FFFF_FFFFn) == 0x200_0000_0000n) {
+            return new MotokoCharacter(String.fromCharCode(Number(word >> 43n)));
+        } else if ((word & 0xFFFF_FFFF_FFFFn) == 0x4000_0000_0000n) {
+            return new MotokoCompactNat16(Number(word >> 48n));
+        } else if ((word & 0xFFFF_FFFF_FFFFn) == 0xC000_0000_0000n) {
+            return new MotokoCompactInt16(Number(signedInt(word >> 48n, 16)));
+        } else if ((word & 0xFF_FFFF_FFFF_FFFFn) == 0x40_0000_0000_0000n) {
+            return new MotokoCompactNat8(Number(word >> 56n));
+        } else if ((word & 0xFF_FFFF_FFFF_FFFFn) == 0xC0_0000_0000_0000n) {
+            return new MotokoCompactInt8(Number(signedInt(word >> 56n, 8)));
         } else {
             throw new Error(`Unsupported value ${word}`);
         }

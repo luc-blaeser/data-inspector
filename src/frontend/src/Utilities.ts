@@ -25,13 +25,21 @@ export function bits64ToFloat(bits64: bigint, littleEndian: boolean) {
     return float64Array[0];
 }
 
-export function bits64ToSignedInt(bits64: bigint) {
-    const negative = (bits64 >> 63n) !== 0n;
+export function bits64ToSignedInt(bits64: bigint): bigint {
+    return signedInt(bits64, 64);
+}
+
+export function signedInt(bits: bigint, width: number): bigint {
+    if (width <= 0) {
+        throw new Error("Invalid integer width");
+    }
+    const negative = (bits >> BigInt(width - 1)) !== 0n;
     if (negative) {
-        const firstComplement = bits64 ^ 0xFFFF_FFFF_FFFF_FFFFn;
+        const MASK = (1n << BigInt(width)) - 1n;
+        const firstComplement = bits ^ MASK;
         const secondComplement = firstComplement + 1n;
         return -secondComplement;
     } else {
-        return bits64;
+        return bits;
     }
 }

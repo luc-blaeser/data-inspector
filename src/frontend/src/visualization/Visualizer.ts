@@ -1,4 +1,4 @@
-import { HeapObject, MotokoActor, MotokoArray, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoConcat, MotokoFloat64, MotokoInt64, MotokoMutBox, MotokoNat64, MotokoObject, MotokoPointer, MotokoPrincipal, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, ObjectId } from "../DataFormat";
+import { HeapObject, MotokoActor, MotokoArray, MotokoBigInt, MotokoBlob, MotokoBool, MotokoCharacter, MotokoClosure, MotokoCompactBigInt, MotokoCompactInt16, MotokoCompactInt32, MotokoCompactInt64, MotokoCompactInt8, MotokoCompactNat16, MotokoCompactNat32, MotokoCompactNat64, MotokoCompactNat8, MotokoConcat, MotokoFloat64, MotokoInt64, MotokoMutBox, MotokoNat64, MotokoObject, MotokoPointer, MotokoPrincipal, MotokoRegion, MotokoSharedFunction, MotokoSome, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, ObjectId } from "../DataFormat";
 import { stringify } from "../Utilities";
 
 export abstract class Visualizer {
@@ -23,7 +23,7 @@ export abstract class Visualizer {
         } else if (heapObject instanceof MotokoMutBox) {
             let text = "var"
             if (!this.pointsToNode(heapObject.field)) {
-                return ` ${this.valueToText(heapObject.field)}`;
+                text += ` ${this.valueToText(heapObject.field)}`;
             }
             return text;
         } else if (heapObject instanceof MotokoObject) {
@@ -65,12 +65,19 @@ export abstract class Visualizer {
             return "closure";
         } else if (heapObject instanceof MotokoVariant) {
             return "variant";
-        } else if (heapObject instanceof MotokoNat64) {
+        } else if (heapObject instanceof MotokoNat64 || 
+            heapObject instanceof MotokoInt64 || 
+            heapObject instanceof MotokoFloat64 ||
+            heapObject instanceof MotokoBigInt) {
             return heapObject.value.toString();
-        } else if (heapObject instanceof MotokoInt64) {
-            return heapObject.value.toString();
-        } else if (heapObject instanceof MotokoFloat64) {
-            return heapObject.value.toString();
+        } else if (heapObject instanceof MotokoRegion) {
+            return `region ${heapObject.regionId}`;
+        } else if (heapObject instanceof MotokoSome) {
+            let text = "?"
+            if (!this.pointsToNode(heapObject.field)) {
+                text += `${this.valueToText(heapObject.field)}`;
+            }
+            return text;
         } else {
             return stringify(heapObject);
         }
@@ -86,9 +93,17 @@ export abstract class Visualizer {
             } else {
                 return "pointer";
             }
-        } else if (value instanceof MotokoBool) {
-            return value.value.toString();
-        } else if (value instanceof MotokoCompactBigInt) {
+        } else if (value instanceof MotokoBool ||
+            value instanceof MotokoCompactBigInt ||
+            value instanceof MotokoCompactNat64 ||
+            value instanceof MotokoCompactInt64 || 
+            value instanceof MotokoCompactNat32 ||
+            value instanceof MotokoCompactInt32 ||
+            value instanceof MotokoCompactNat16 ||
+            value instanceof MotokoCompactInt16 ||
+            value instanceof MotokoCompactNat8 ||
+            value instanceof MotokoCompactInt8 ||
+            value instanceof MotokoCharacter) {
             return value.value.toString();
         } else {
             throw new Error(`Unsupported value ${value.valueType}`);

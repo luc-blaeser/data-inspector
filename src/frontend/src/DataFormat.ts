@@ -19,7 +19,9 @@ export enum ObjectType {
     NAT64 = "nat64",
     OBJECT = "object",
     PRINCIPAL = "principal",
+    REGION = "region",
     SHARED_FUNCTION = "shared_function",
+    SOME = "some",
     TEXT = "text",
     VARIANT = "variant",
 }
@@ -258,9 +260,48 @@ export class MotokoSharedFunction extends HeapObject {
     }
 }
 
+export class MotokoRegion extends HeapObject {
+    regionId: bigint;
+    pageCount: bigint;
+    pageTable: MotokoValue;
+
+    public constructor(objectId: ObjectId, regionId: bigint, pageCount: bigint, pageTable: MotokoValue) {
+        super(objectId, ObjectType.REGION);
+        this.regionId = regionId;
+        this.pageCount = pageCount;
+        this.pageTable = pageTable;
+    }
+
+    getFields(): MotokoValue[] {
+        return [this.pageTable];
+    }
+}
+
+export class MotokoSome extends HeapObject {
+    field: MotokoValue;
+
+    public constructor(objectId: ObjectId, field: MotokoValue) {
+        super(objectId, ObjectType.SOME);
+        this.field = field;
+    }
+
+    getFields(): MotokoValue[] {
+        return [this.field];
+    }
+}
+
 export enum ValueType {
     BIGINT = "bigint",
     BOOL = "bool",
+    CHAR = "char",
+    INT8 = "int8",
+    INT16 = "int16",
+    INT32 = "int32",
+    INT64 = "int64",
+    NAT8 = "nat8",
+    NAT16 = "nat16",
+    NAT32 = "nat32",
+    NAT64 = "nat64",
     POINTER = "pointer",
 }
 
@@ -301,6 +342,88 @@ export class MotokoCompactBigInt extends MotokoValue {
 
     public constructor(value: bigint) {
         super(ValueType.BIGINT);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactNat64 extends MotokoValue {
+    value: bigint;
+
+    public constructor(value: bigint) {
+        super(ValueType.NAT64);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactInt64 extends MotokoValue {
+    value: bigint;
+
+    public constructor(value: bigint) {
+        super(ValueType.INT64);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactNat32 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.NAT32);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactInt32 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.INT32);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactNat16 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.NAT16);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactInt16 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.INT16);
+        this.value = value;
+    }
+}
+
+
+export class MotokoCompactNat8 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.NAT8);
+        this.value = value;
+    }
+}
+
+export class MotokoCompactInt8 extends MotokoValue {
+    value: number;
+
+    public constructor(value: number) {
+        super(ValueType.INT8);
+        this.value = value;
+    }
+}
+
+export class MotokoCharacter extends MotokoValue {
+    value: string;
+
+    public constructor(value: string) {
+        super(ValueType.CHAR);
         this.value = value;
     }
 }

@@ -1,3 +1,4 @@
+import Region "mo:base/Region";
 actor {
   stable let _boxedNat = 12345678901234567890123456789012345678901234567890;
   stable let _boxedInt = -12345678901234567890123456789012345678901234567890;
@@ -10,4 +11,21 @@ actor {
   stable let _boxedNat64: Nat64 = 12345678901234567890;
   stable let _boxedInt64Min: Int64 = -9223372036854775808;
   stable let _boxedInt64: Int64 = -1234567890123456789;
+  stable let region = Region.new();
+  stable let _boxedOption = ???null;
+  stable let _compactNat = 12345;
+  stable let _compactInt = -12345;
+  stable let _compactNat64: Nat64 = 1234;
+  stable let _compactInt64: Int64 = -1234;
+  stable let _compactNat32: Nat32 = 123;
+  stable let _compactInt32: Int32 = -123;
+  stable let _compactNat16: Nat16 = 12;
+  stable let _compactInt16: Int16 = -12;
+  stable let _compactNat8: Nat8 = 1;
+  stable let _compactInt8: Int32 = -1;
+  stable let _character: Char = '⛔';
+  stable let _unit: () = ();
+  
+  ignore Region.grow(region, 1);
+  Region.storeNat32(region, 1, 0);
 };

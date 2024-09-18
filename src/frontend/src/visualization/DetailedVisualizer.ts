@@ -22,7 +22,7 @@ export class DetailedVisualizer extends Visualizer {
     }
 
     pointsToNode(value: MotokoValue): boolean {
-        return value instanceof MotokoPointer;
+        return value instanceof MotokoPointer && !value.isNull();
     }
 
     getReferences(heapObject: any): ObjectId[] {

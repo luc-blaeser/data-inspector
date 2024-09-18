@@ -1,4 +1,4 @@
-import { HeapObject, MotokoArray, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoTuple, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
+import { HeapObject, MotokoArray, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoRegion, MotokoSome, MotokoTuple, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
 import { Visualizer } from "./Visualizer";
 
 export class CompactVisualizer extends Visualizer {
@@ -45,13 +45,15 @@ export class CompactVisualizer extends Visualizer {
         return heapObject instanceof MotokoArray ||
             heapObject instanceof MotokoTuple ||
             heapObject instanceof MotokoObject ||
-            heapObject instanceof MotokoVariant;
+            heapObject instanceof MotokoVariant ||
+            heapObject instanceof MotokoRegion;
     }
 
     pointsToNode(value: MotokoValue): boolean {
         if (value instanceof MotokoPointer && !value.isNull()) {
             const target = this.heap.objects.get(value.objectId)!;
             return (target instanceof MotokoMutBox && this.pointsToNode(target.field)) ||
+                (target instanceof MotokoSome && this.pointsToNode(target.field)) ||
                 this.isNode(target);
         } else {
             return false;
