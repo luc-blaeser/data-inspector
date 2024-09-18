@@ -7,6 +7,9 @@ Demonstrator for generic Motoko data inspection (aka data visualizer):
 * Supports two types of visualizations:
   - Detailed: Represent every heap object as a node.
   - Compact: Collapse `mutbox` and boxed numbers, skip object hash blobs.
+ 
+![image](https://github.com/user-attachments/assets/8713baa3-ade4-4940-b59a-43dc1d1b9d57)
+
 
 ## Setup
 
