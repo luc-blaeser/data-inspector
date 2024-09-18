@@ -1,4 +1,4 @@
-import { HeapObject, MotokoActor, MotokoArray, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoConcat, MotokoMutBox, MotokoObject, MotokoPointer, MotokoPrincipal, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, ObjectId } from "../DataFormat";
+import { HeapObject, MotokoActor, MotokoArray, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoConcat, MotokoFloat64, MotokoInt64, MotokoMutBox, MotokoNat64, MotokoObject, MotokoPointer, MotokoPrincipal, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, ObjectId } from "../DataFormat";
 import { stringify } from "../Utilities";
 
 export abstract class Visualizer {
@@ -65,6 +65,12 @@ export abstract class Visualizer {
             return "closure";
         } else if (heapObject instanceof MotokoVariant) {
             return "variant";
+        } else if (heapObject instanceof MotokoNat64) {
+            return heapObject.value.toString();
+        } else if (heapObject instanceof MotokoInt64) {
+            return heapObject.value.toString();
+        } else if (heapObject instanceof MotokoFloat64) {
+            return heapObject.value.toString();
         } else {
             return stringify(heapObject);
         }

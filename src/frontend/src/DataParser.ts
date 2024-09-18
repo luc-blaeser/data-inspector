@@ -1,4 +1,5 @@
-import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple, MotokoConcat, MotokoPrincipal } from "./DataFormat";
+import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple, MotokoConcat, MotokoPrincipal, MotokoNat64, MotokoInt64, MotokoFloat64 } from "./DataFormat";
+import { bits64ToFloat, bits64ToSignedInt } from "./Utilities";
 
 const WORD_SIZE = 8;
 const LITTLE_ENDIAN = true;
@@ -48,6 +49,10 @@ export class DataParser {
         switch (objectTag) {
             case ObjectTag.TAG_OBJECT:
                 return this.parseRegularObject(objectId);
+            case ObjectTag.TAG_BITS64_U:
+            case ObjectTag.TAG_BITS64_S:
+            case ObjectTag.TAG_BITS64_F:
+                return this.parseBoxed64(objectId, objectTag);
             case ObjectTag.TAG_BLOB_B:
             case ObjectTag.TAG_BLOB_T:
             case ObjectTag.TAG_BLOB_P:
@@ -70,6 +75,22 @@ export class DataParser {
                 return this.parseConcat(objectId);
             default:
                 throw new Error(`Unsupported object tag ${objectTag}`);
+        }
+    }
+
+    private parseBoxed64(objectId: ObjectId, objectTag: ObjectTag) {
+        const bits64 = this.nextWord();
+        switch (objectTag) {
+            case ObjectTag.TAG_BITS64_U:
+                return new MotokoNat64(objectId, bits64);
+            case ObjectTag.TAG_BITS64_S:
+                const int64 = bits64ToSignedInt(bits64);
+                return new MotokoInt64(objectId, int64);
+            case ObjectTag.TAG_BITS64_F:
+                const float64 = bits64ToFloat(bits64, LITTLE_ENDIAN);
+                return new MotokoFloat64(objectId, float64);
+            default:
+                throw new Error("Unsupported boxed 64-bit number");
         }
     }
 
@@ -114,10 +135,11 @@ export class DataParser {
             throw new Error(`Invalid BigInt length: alloc ${alloc}, used ${used}`);
         }
         let value = 0n;
+        let base = 1n;
         for (let index = 0; index < used; index++) {
             const element = this.nextWord();
-            const base = 1n << 60n;
-            value = value * base + element;
+            value += element * base;
+            base <<= 60n;
         }
         for (let index = used; index < alloc; index++) {
             this.skip(WORD_SIZE); // Skip unused space.

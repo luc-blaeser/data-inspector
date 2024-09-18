@@ -64,6 +64,7 @@ class App {
                 <option value="${process.env.CANISTER_ID_BACKEND1}">
                 <option value="${process.env.CANISTER_ID_BACKEND2}">
                 <option value="${process.env.CANISTER_ID_BACKEND3}">
+                <option value="${process.env.CANISTER_ID_BACKEND4}">
               </datalist>
             </div>
             <div>

@@ -15,6 +15,11 @@
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
+    "backend4": {
+      "main": "src/backend4/main.mo",
+      "type": "motoko",
+      "args": "--enhanced-orthogonal-persistence --sanity-checks"
+    },
     "frontend": {
       "dependencies": [
         "backend1",

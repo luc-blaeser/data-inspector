@@ -13,7 +13,10 @@ export enum ObjectType {
     CONCAT = "concat",
     BIGINT = "bigint",
     BLOB = "blob",
+    FLOAT64 = "float64",
+    INT64 = "int64",
     MUTBOX = "mutbox",
+    NAT64 = "nat64",
     OBJECT = "object",
     PRINCIPAL = "principal",
     SHARED_FUNCTION = "shared_function",
@@ -79,6 +82,45 @@ export class MotokoBigInt extends HeapObject {
 
     public constructor(objectId: ObjectId, value: bigint) {
         super(objectId, ObjectType.BIGINT);
+        this.value = value;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
+}
+
+export class MotokoNat64 extends HeapObject {
+    value: bigint;
+
+    public constructor(objectId: ObjectId, value: bigint) {
+        super(objectId, ObjectType.NAT64);
+        this.value = value;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
+}
+
+export class MotokoInt64 extends HeapObject {
+    value: bigint;
+
+    public constructor(objectId: ObjectId, value: bigint) {
+        super(objectId, ObjectType.INT64);
+        this.value = value;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
+}
+
+export class MotokoFloat64 extends HeapObject {
+    value: number;
+
+    public constructor(objectId: ObjectId, value: number) {
+        super(objectId, ObjectType.FLOAT64);
         this.value = value;
     }
 
