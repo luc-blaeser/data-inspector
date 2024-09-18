@@ -1,12 +1,12 @@
-import { HeapObject, MotokoActor, MotokoArray, MotokoBigInt, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
-import { stringify } from "../Utilities";
+import { HeapObject, MotokoArray, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoTuple, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
 import { Visualizer } from "./Visualizer";
 
-export class CompactVisualizer implements Visualizer {
+export class CompactVisualizer extends Visualizer {
     heap: MotokoHeap;
     nodes: Map<ObjectId, HeapObject> = new Map();
 
     public constructor(heap: MotokoHeap) {
+        super();
         this.heap = heap;
         this.collectNodes();
     }
@@ -37,72 +37,24 @@ export class CompactVisualizer implements Visualizer {
         return Array.from(this.nodes.values());
     }
 
-    isReference(value: MotokoValue): boolean {
+    getNode(objectId: ObjectId): HeapObject {
+        return this.heap.objects.get(objectId)!;
+    }
+
+    isNode(heapObject: HeapObject): boolean {
+        return heapObject instanceof MotokoArray ||
+            heapObject instanceof MotokoTuple ||
+            heapObject instanceof MotokoObject ||
+            heapObject instanceof MotokoVariant;
+    }
+
+    pointsToNode(value: MotokoValue): boolean {
         if (value instanceof MotokoPointer && !value.isNull()) {
             const target = this.heap.objects.get(value.objectId)!;
-            return (target instanceof MotokoArray || target instanceof MotokoTuple || target instanceof MotokoObject || target instanceof MotokoVariant);
+            return (target instanceof MotokoMutBox && this.pointsToNode(target.field)) ||
+                this.isNode(target);
         } else {
             return false;
-        }
-    }
-
-    getLabel(heapObject: HeapObject): string {
-        if (heapObject instanceof MotokoText) {
-            return `"${heapObject.value}"`;
-        } else if (heapObject instanceof MotokoMutBox) {
-            return `var ${this.valueToText(heapObject.field)}`;
-        } else if (heapObject instanceof MotokoObject) {
-            let text = "{ ";
-            for (let field of heapObject.fields) {
-                if (!this.isReference(field)) {
-                    text += `${this.valueToText(field)}; `;
-                }
-            }
-            text += "}";
-            return text;
-        } else if (heapObject instanceof MotokoArray) {
-            let text = "[ ";
-            for (let element of heapObject.elements) {
-                if (!this.isReference(element)) {
-                    text += `${this.valueToText(element)}, `;
-                }
-            }
-            text += "]";
-            return text;
-        } else if (heapObject instanceof MotokoTuple) {
-            let text = "( ";
-            for (let element of heapObject.elements) {
-                if (!this.isReference(element)) {
-                    text += `${this.valueToText(element)}, `;
-                }
-            }
-            text += ")";
-            return text;
-        } else if (heapObject instanceof MotokoBlob) {
-            return "blob";
-        } else if (heapObject instanceof MotokoActor) {
-            return "actor";
-        } else if (heapObject instanceof MotokoSharedFunction) {
-            return "shared function";
-        } else {
-            return stringify(heapObject);
-        }
-    }
-
-    private valueToText(value: MotokoValue): string {
-        if (value instanceof MotokoPointer) {
-            if (!this.isReference(value)) {
-                const target = this.heap.objects.get(value.objectId)!;
-                return this.getLabel(target);
-            } else {
-                return "pointer";
-            }
-        } else if (value instanceof MotokoBool) {
-            return value.value.toString();
-        } else if (value instanceof MotokoCompactBigInt) {
-            return value.value.toString();
-        } else {
-            throw new Error(`Unsupported value ${value.valueType}`);
         }
     }
 
@@ -112,7 +64,7 @@ export class CompactVisualizer implements Visualizer {
         for (let field of fields) {
             if (field instanceof MotokoPointer && !field.isNull()) {
                 const target = this.heap.objects.get(field.objectId)!;
-                if (this.isReference(field)) {
+                if (this.isNode(target)) {
                     references.push(target.objectId);
                 } else {
                     references = references.concat(this.getReferences(target));

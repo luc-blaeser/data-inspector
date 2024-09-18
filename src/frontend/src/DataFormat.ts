@@ -10,10 +10,12 @@ export enum ObjectType {
     ACTOR = "actor",
     ARRAY = "array",
     CLOSURE = "closure",
+    CONCAT = "concat",
     BIGINT = "bigint",
     BLOB = "blob",
     MUTBOX = "mutbox",
     OBJECT = "object",
+    PRINCIPAL = "principal",
     SHARED_FUNCTION = "shared_function",
     TEXT = "text",
     VARIANT = "variant",
@@ -51,6 +53,19 @@ export class MotokoBlob extends HeapObject {
 
     public constructor(objectId: ObjectId, bytes: Uint8Array) {
         super(objectId, ObjectType.BLOB);
+        this.bytes = bytes;
+    }
+
+    getFields(): MotokoValue[] {
+        return [];
+    }
+}
+
+export class MotokoPrincipal extends HeapObject {
+    bytes: Uint8Array;
+
+    public constructor(objectId: ObjectId, bytes: Uint8Array) {
+        super(objectId, ObjectType.PRINCIPAL);
         this.bytes = bytes;
     }
 
@@ -110,6 +125,23 @@ export class MotokoText extends HeapObject {
 
     getFields(): MotokoValue[] {
         return [];
+    }
+}
+
+export class MotokoConcat extends HeapObject {
+    length: bigint;
+    text1: MotokoValue;
+    text2: MotokoValue;
+
+    constructor(objectId: ObjectId, length: bigint, text1: MotokoValue, text2: MotokoValue) {
+        super(objectId, ObjectType.CONCAT);
+        this.length = length;
+        this.text1 = text1;
+        this.text2 = text2;
+    }
+
+    getFields(): MotokoValue[] {
+        return [this.text1, this.text2];
     }
 }
 

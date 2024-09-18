@@ -1,4 +1,4 @@
-import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple } from "./DataFormat";
+import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple, MotokoConcat, MotokoPrincipal } from "./DataFormat";
 
 const WORD_SIZE = 8;
 const LITTLE_ENDIAN = true;
@@ -66,9 +66,18 @@ export class DataParser {
                 return this.parseClosure(objectId);
             case ObjectTag.TAG_VARIANT:
                 return this.parseVariant(objectId);
+            case ObjectTag.TAG_CONCAT:
+                return this.parseConcat(objectId);
             default:
                 throw new Error(`Unsupported object tag ${objectTag}`);
         }
+    }
+
+    private parseConcat(objectId: ObjectId): MotokoConcat {
+        const length = this.nextWord() as bigint;
+        const text1 = this.parseValue();
+        const text2 = this.parseValue();
+        return new MotokoConcat(objectId, length, text1, text2);
     }
 
     private parseVariant(objectId: ObjectId): MotokoVariant {
@@ -153,6 +162,8 @@ export class DataParser {
                 return new MotokoText(objectId, text);
             case ObjectTag.TAG_BLOB_A:
                 return new MotokoActor(objectId, bytes);
+            case ObjectTag.TAG_BLOB_P:
+                return new MotokoPrincipal(objectId, bytes);
             default:
                 throw new Error(`Unsupported blob tag ${objectTag}`);
         }
