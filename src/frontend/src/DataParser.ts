@@ -1,4 +1,4 @@
-import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction } from "./DataFormat";
+import { MotokoHeap, Objects, ObjectId, HeapObject, MotokoObject, MotokoBlob, MotokoBigInt, MotokoArray, MotokoText, MotokoMutBox, MotokoClosure, MotokoActor, MotokoVariant, MotokoValue, MotokoPointer, MotokoBool, MotokoCompactBigInt, MotokoSharedFunction, MotokoTuple } from "./DataFormat";
 
 const WORD_SIZE = 8;
 const LITTLE_ENDIAN = true;
@@ -129,6 +129,8 @@ export class DataParser {
             case ObjectTag.TAG_ARRAY_I:
             case ObjectTag.TAG_ARRAY_M:
                 return new MotokoArray(objectId, objectTag == ObjectTag.TAG_ARRAY_M, elements);
+            case ObjectTag.TAG_ARRAY_T:
+                return new MotokoTuple(objectId, elements);
             case ObjectTag.TAG_ARRAY_S:
                 if (elements.length != 2) {
                     throw new Error("Invalid shared function");

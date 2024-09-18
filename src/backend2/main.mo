@@ -1,5 +1,5 @@
 actor {
-  stable let sportsClub = [ 
+  stable let _sportsClub = [ 
     { 
       firstName = "Paul";
       name = "Smith";

@@ -1,4 +1,4 @@
-import { HeapObject, MotokoActor, MotokoArray, MotokoBlob, MotokoBool, MotokoCompactBigInt, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoSharedFunction, MotokoText, MotokoValue, ObjectId } from "../DataFormat";
+import { HeapObject, MotokoActor, MotokoArray, MotokoBlob, MotokoBool, MotokoCompactBigInt, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, ObjectId } from "../DataFormat";
 import { stringify } from "../Utilities";
 import { Visualizer } from "./Visualizer";
 
@@ -39,6 +39,15 @@ export class DetailedVisualizer implements Visualizer {
                 }
             }
             text += "]";
+            return text;
+        } else if (heapObject instanceof MotokoTuple) {
+            let text = "( ";
+            for (let element of heapObject.elements) {
+                if (!(element instanceof MotokoPointer)) {
+                    text += `${this.valueToText(element)}, `;
+                }
+            }
+            text += ")";
             return text;
         } else if (heapObject instanceof MotokoBlob) {
             return "blob";

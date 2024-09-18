@@ -87,6 +87,19 @@ export class MotokoArray extends HeapObject {
     }
 }
 
+export class MotokoTuple extends HeapObject {
+    elements: MotokoValue[];
+
+    public constructor(objectId: ObjectId, elements: MotokoValue[]) {
+        super(objectId, ObjectType.ARRAY);
+        this.elements = elements;
+    }
+
+    getFields(): MotokoValue[] {
+        return this.elements;;
+    }
+}
+
 export class MotokoText extends HeapObject {
     value: string;
 

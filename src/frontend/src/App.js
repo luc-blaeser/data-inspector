@@ -14,22 +14,25 @@ class App {
   #handleSubmit = async (e) => {
     e.preventDefault();
 
+    this.error = "";
     this.motokoHeap = null;
     try {
       const canisterId = document.getElementById('canisterId').value;
+      if (canisterId == "") {
+        throw new Error("Invalid canister Id");
+      }
       const blob = await inspectData(canisterId, process.env.DFX_NETWORK);
       console.log(`Downloaded heap image of ${blob.length} bytes from ${canisterId}`);
       this.motokoHeap = DataParser.parse(blob);
       console.log(stringify(this.motokoHeap));
-      this.output = "";
     } catch (error) {
       if (error.message.includes("Unauthorized call of __motoko_inspect_data")) {
-        this.output = "Missing authorization: Only canister controller are allowed to use data inspection";
+        this.error = "Missing authorization: Only canister controller are allowed to use data inspection";
       } else {
-        this.output = error.message;
+        this.error = error.message;
       }
     }
-
+    
     this.displayGraph();
     this.#render();
   };
@@ -52,31 +55,35 @@ class App {
   #render() {
     let body = html`
       <main>
-        <h1>Data Inspector</h1>
-        <form action="#">
-          <div class="form-block">
-            <input list="options" id="canisterId" placeholder="Canister:">
-            <datalist id="options">
-              <option value="${process.env.CANISTER_ID_BACKEND1}">
-              <option value="${process.env.CANISTER_ID_BACKEND2}">
-            </datalist>
-          </div>
-          <div class="form-block">
-              <label>
-                  <input type="radio" name="view" value="compact" checked>
-                  Compact View
-              </label>
-              <label>
-                  <input type="radio" name="view" value="detailed">
-                  Detailed View
-              </label>
-          </div>
-          <div class="form-block">
-            <button type="submit">Inspect</button>
-          </div>
-        </form>
-        <section id="graph"></section>
-        <section id="output">${this.output}</section>
+        <h1>Motoko Data Inspector</h1>
+        <div id="panel">
+          <section id="control">
+            <div>
+              <input list="options" id="canisterId" placeholder="Canister ID">
+              <datalist id="options">
+                <option value="${process.env.CANISTER_ID_BACKEND1}">
+                <option value="${process.env.CANISTER_ID_BACKEND2}">
+                <option value="${process.env.CANISTER_ID_BACKEND3}">
+              </datalist>
+            </div>
+            <div>
+                <label>
+                    <input type="radio" name="view" value="compact" checked>
+                    Compact View
+                </label>
+                <label>
+                    <input type="radio" name="view" value="detailed">
+                    Detailed View
+                </label>
+            </div>
+            <div>
+              <form action="#">
+              <button type="submit">Inspect</button>
+            </form>
+          </section>
+          <section id="error">${this.error}</section>
+          <section id="graph"></section>
+        </div>
       </main>
     `;
     render(body, document.getElementById('root'));

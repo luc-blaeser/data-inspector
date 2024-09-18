@@ -10,10 +10,16 @@
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
+    "backend3": {
+      "main": "src/backend3/main.mo",
+      "type": "motoko",
+      "args": "--enhanced-orthogonal-persistence --sanity-checks"
+    },
     "frontend": {
       "dependencies": [
         "backend1",
-        "backend2"
+        "backend2",
+        "backend3"
       ],
       "source": [
         "src/frontend/dist"
@@ -25,7 +31,7 @@
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",

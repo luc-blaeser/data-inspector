@@ -1,4 +1,4 @@
-import { HeapObject, MotokoActor, MotokoArray, MotokoBigInt, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoSharedFunction, MotokoText, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
+import { HeapObject, MotokoActor, MotokoArray, MotokoBigInt, MotokoBlob, MotokoBool, MotokoClosure, MotokoCompactBigInt, MotokoHeap, MotokoMutBox, MotokoObject, MotokoPointer, MotokoSharedFunction, MotokoText, MotokoTuple, MotokoValue, MotokoVariant, NULL_POINTER, ObjectId } from "../DataFormat";
 import { stringify } from "../Utilities";
 import { Visualizer } from "./Visualizer";
 
@@ -40,7 +40,7 @@ export class CompactVisualizer implements Visualizer {
     isReference(value: MotokoValue): boolean {
         if (value instanceof MotokoPointer && !value.isNull()) {
             const target = this.heap.objects.get(value.objectId)!;
-            return (target instanceof MotokoArray || target instanceof MotokoObject || target instanceof MotokoVariant);
+            return (target instanceof MotokoArray || target instanceof MotokoTuple || target instanceof MotokoObject || target instanceof MotokoVariant);
         } else {
             return false;
         }
@@ -68,6 +68,15 @@ export class CompactVisualizer implements Visualizer {
                 }
             }
             text += "]";
+            return text;
+        } else if (heapObject instanceof MotokoTuple) {
+            let text = "( ";
+            for (let element of heapObject.elements) {
+                if (!this.isReference(element)) {
+                    text += `${this.valueToText(element)}, `;
+                }
+            }
+            text += ")";
             return text;
         } else if (heapObject instanceof MotokoBlob) {
             return "blob";
