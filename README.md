@@ -19,7 +19,7 @@ Demonstrator for generic Motoko data inspection (aka data visualizer):
   DFX_VERSION=0.24.0-beta.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)
   ```
 
-2. Use and build Motoko branch `luc/data-inspection`
+2. Use and build Motoko PR https://github.com/dfinity/motoko/pull/4705:
 
   ```
   git checkout luc/data-inspection
