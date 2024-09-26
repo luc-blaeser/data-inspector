@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "setup": "npm i && dfx canister create backend1 && dfx generate backend1 && dfx canister create backend2 && dfx generate backend2 && dfx canister create backend3 && dfx generate backend3 && dfx canister create backend4 && dfx generate backend4 && dfx deploy",
+    "setup": "npm i && dfx canister create example1 && dfx generate example1 && dfx canister create example2 && dfx generate example2 && dfx canister create example3 && dfx generate example3 && dfx canister create example4 && dfx generate example4 && dfx deploy",
     "start": "vite --port 3000",
     "prebuild": "dfx generate",
     "build": "tsc && vite build",

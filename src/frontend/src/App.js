@@ -61,10 +61,10 @@ class App {
             <div>
               <input list="options" id="canisterId" placeholder="Canister ID">
               <datalist id="options">
-                <option value="${process.env.CANISTER_ID_BACKEND1}">
-                <option value="${process.env.CANISTER_ID_BACKEND2}">
-                <option value="${process.env.CANISTER_ID_BACKEND3}">
-                <option value="${process.env.CANISTER_ID_BACKEND4}">
+                <option value="${process.env.CANISTER_ID_EXAMPLE1}">
+                <option value="${process.env.CANISTER_ID_EXAMPLE2}">
+                <option value="${process.env.CANISTER_ID_EXAMPLE3}">
+                <option value="${process.env.CANISTER_ID_EXAMPLE4}">
               </datalist>
             </div>
             <div>

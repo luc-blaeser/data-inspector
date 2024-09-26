@@ -1,31 +1,27 @@
 {
   "canisters": {
-    "backend1": {
-      "main": "src/backend1/main.mo",
+    "example1": {
+      "main": "src/example1/main.mo",
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
-    "backend2": {
-      "main": "src/backend2/main.mo",
+    "example2": {
+      "main": "src/example2/main.mo",
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
-    "backend3": {
-      "main": "src/backend3/main.mo",
+    "example3": {
+      "main": "src/example3/main.mo",
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
-    "backend4": {
-      "main": "src/backend4/main.mo",
+    "example4": {
+      "main": "src/example4/main.mo",
       "type": "motoko",
       "args": "--enhanced-orthogonal-persistence --sanity-checks"
     },
     "frontend": {
-      "dependencies": [
-        "backend1",
-        "backend2",
-        "backend3"
-      ],
+      "dependencies": [],
       "source": [
         "src/frontend/dist"
       ],
